@@ -1,0 +1,34 @@
+//#include <Windows.h>
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/video/background_segm.hpp"
+#include "opencv2/video/tracking.hpp"
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, const char** argv)
+{
+  //  Load the image from file
+ Mat LoadedImage;
+ // Just loaded image Lenna.png from project dir to LoadedImage Mat
+ LoadedImage = imread("Lenna.png", IMREAD_COLOR);
+ //I would like to visualize Mat step by step to see the result immediately.
+ // Show what is in the Mat after load
+ namedWindow("Step 1 image loaded", WINDOW_AUTOSIZE);
+ imshow("Step 1 image loaded", LoadedImage);
+ waitKey(1000);
+ // Same the result from LoadedImage to Step1.JPG
+ imwrite("Step1.JPG", LoadedImage);
+
+ // Load again source images
+ LoadedImage = imread("Lenna.png", IMREAD_COLOR);
+ //You can resize to any size you want Size(width,heigth)
+ resize(LoadedImage, LoadedImage, Size(100, 100));
+ 
+ // Vizualization
+ namedWindow("Step 3 image resize", WINDOW_AUTOSIZE);
+ imshow("Step 3 image resize", LoadedImage);
+ waitKey(1000);
+}
+ 
