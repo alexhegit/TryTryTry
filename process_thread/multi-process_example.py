@@ -10,6 +10,9 @@ Created on Tue Oct  6 19:05:15 2019
 
 """
 A example of Multi-processing
+
+Here is a blog to know the benifit of multiprocessing
+https://sebastianraschka.com/Articles/2014_multiprocessing.html
 """
 
 
