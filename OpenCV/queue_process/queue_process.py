@@ -38,8 +38,8 @@ def setVideoInfo(vhandle, fps, width, height):
 def consumer(qf, id):
     print("Consumer %d start" %(id))
     while True:
-        if qf.empty():
-            continue
+        #if qf.empty():
+        #    continue
         #print("Consumer %d, Frame Queue Size: %d" %(id, qf.qsize()))
         frame = qf.get()
         if frame is None:
@@ -56,7 +56,7 @@ def producer(cap, qf):
         ret, frame = cap.read()
         cv2.imshow("preview", frame)
         rotate_frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-        cv2.imshow("rotate", rotate_frame)
+        #cv2.imshow("rotate", rotate_frame)
         qf.put(rotate_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("Producer sent stop signal")
