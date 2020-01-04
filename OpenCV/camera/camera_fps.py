@@ -9,6 +9,10 @@ import sys
 
 FPATH = "/tmp/cap"
 
+def decode_fourcc(v):
+    v = int(v)
+    return "".join([chr((v >> 8 * i) & 0xFF) for i in range(4)])
+
 def showVideoInfo(cap):
     try:
         fps = cap.get(cv2.CAP_PROP_FPS)
@@ -18,8 +22,9 @@ def showVideoInfo(cap):
                 int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
         ret, firstframe = cap.read()
         if ret:
+            print("Current Settings:")
             print("FPS: %.2f" % fps)
-            print("FOURCC: %s" % fourcc)
+            print("FOURCC: %s" %(decode_fourcc(fourcc)))
             #print("COUNT: %.2f" % count)
             print("WIDTH: %d" % size[0])
             print("HEIGHT: %d" % size[1])
@@ -32,10 +37,9 @@ def showVideoInfo(cap):
 def setVideoInfo(cap, fps, width, height):
     fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
     #fourcc = cv2.CV_FOURCC('M','J','P','G')
-    print("set fourcc, MJPG: 1196444237")
-    print(fourcc)
+    print("set fourcc, MJPG(1196444237): %d" %(fourcc))
     cap.set(cv2.CAP_PROP_FOURCC, fourcc)
-    #cap.set(cv2.CAP_PROP_FPS, fps)
+    cap.set(cv2.CAP_PROP_FPS, fps)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
