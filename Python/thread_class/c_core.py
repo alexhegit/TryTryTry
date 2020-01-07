@@ -5,6 +5,7 @@ from threading import Thread
 from queue import Queue
 #from Queue import Queue
 from c_camera import ImgCap, initCamera
+import copy
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -20,6 +21,15 @@ class iTask(Thread):
             if img is None:
                 break
             self.frame_count += 1
+            print("{}:{}".format(self.name, self.frame_count))
+            '''
+            Note:
+            Only one cv2 windows can be enabled for multi-thread
+            '''
+            #showimg = copy.copy(img)
+            #cv2.imshow(self.name, showimg)
+            #if cv2.waitKey(1) & 0xFF == ord('q'):
+            #    break
         print("Quit iTask")
     def terminate(self):
         print("iTask OFF")
@@ -64,7 +74,7 @@ def demo(FLAGS):
 
     print("start consumer")
     for i in range(FLAGS.jobs):
-        queue = Queue(maxsize=0)
+        queue = Queue(maxsize=128)
         queue_list.append(queue)
         consumer = iTask(queue, signal)
         consumer_list.append(consumer)
@@ -109,6 +119,7 @@ def demo(FLAGS):
         inference_frame_count += fcnt
     print("Consume frames: %d" %inference_frame_count)
 
+    cv2.destroyAllWindows()
     cap.release()
     time_used = time_end - time_start
     print("Time Used: %d second!" %time_used)
