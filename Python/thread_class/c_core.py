@@ -76,7 +76,7 @@ def demo(FLAGS):
     for i in range(FLAGS.jobs):
         queue = Queue(maxsize=128)
         queue_list.append(queue)
-        consumer = iTask(queue, signal)
+        consumer = iTask(queue, "ON")
         consumer_list.append(consumer)
         thread_list.append(consumer)
         consumer.setDaemon(True)
@@ -87,7 +87,7 @@ def demo(FLAGS):
 
     global pdd
     print("start producer")
-    producer = ImgCap(cap, queue_list, signal)
+    producer = ImgCap(cap, queue_list, "ON")
     pdd = producer
     thread_list.append(producer)
     producer.setDaemon(True)
