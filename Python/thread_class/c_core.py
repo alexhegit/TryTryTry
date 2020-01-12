@@ -21,7 +21,7 @@ class iTask(Thread):
             if img is None:
                 break
             self.frame_count += 1
-            print("{}:{}".format(self.name, self.frame_count))
+            #print("{}:{}".format(self.name, self.frame_count))
             '''
             Note:
             Only one cv2 windows can be enabled for multi-thread
@@ -30,9 +30,9 @@ class iTask(Thread):
             #cv2.imshow(self.name, showimg)
             #if cv2.waitKey(1) & 0xFF == ord('q'):
             #    break
-        print("Quit iTask")
+        print("Quit {}, frames {}".format(self.name, self.frame_count))
     def terminate(self):
-        print("iTask OFF")
+        print("{} OFF".format(self.name))
         self.signal = "OFF"
     def count_frame(self):
         return self.frame_count
