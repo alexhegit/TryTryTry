@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--vdev',
         type=int,
-        default='0',        
+        default='0',
         help='vdev - /dev/videoX')
     parser.add_argument(
         '--morphology_meth',

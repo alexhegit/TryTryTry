@@ -74,7 +74,9 @@ class ImgCap(Thread):
                 Only one cv2 windows can be enabled for multi-thread
                 '''
                 cv2.imshow("Original", frame)
-                cv2.waitKey(1)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    self.signal = "OFF"
+                    break
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 rotate_frame = cv2.rotate(gray, cv2.ROTATE_90_CLOCKWISE)
                 queue.put(rotate_frame)
