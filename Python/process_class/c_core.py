@@ -1,17 +1,18 @@
 import os, sys, signal, time, timeit
 import cv2
 import numpy as np
-from threading import Thread
-from queue import Queue
+from multiprocessing import Process, Queue
+from multiprocessing.sharedctypes import Value, Array
+#from queue import Queue
 #from Queue import Queue
 from c_camera import ImgCap, initCamera
 import copy
 
 np.set_printoptions(threshold=sys.maxsize)
 
-class iTask(Thread):
+class iTask(Process):
     def __init__(self, queue, signal):
-        Thread.__init__(self)
+        Process.__init__(self)
         self.qf = queue
         self.signal = signal
         self.frame_count = 0
@@ -70,16 +71,16 @@ def demo(FLAGS):
     global sign
     queue_list = []
     consumer_list = []
-    thread_list = []
+    job_list = []
 
     print("start consumer")
     for i in range(FLAGS.jobs):
         queue = Queue(maxsize=128)
         queue_list.append(queue)
-        consumer = iTask(queue, "ON")
+        consumer = iTask(queue, signal)
         consumer_list.append(consumer)
-        thread_list.append(consumer)
-        consumer.setDaemon(True)
+        job_list.append(consumer)
+        #consumer.setDaemon(True)
         consumer.start()
 
     print("timeit")
@@ -87,10 +88,11 @@ def demo(FLAGS):
 
     global pdd
     print("start producer")
-    producer = ImgCap(cap, queue_list, "ON")
+    f = Value('i', 0)
+    producer = ImgCap(cap, queue_list, signal, f)
     pdd = producer
-    thread_list.append(producer)
-    producer.setDaemon(True)
+    job_list.append(producer)
+    #producer.setDaemon(True)
     producer.start()
 
     '''
@@ -100,13 +102,17 @@ def demo(FLAGS):
     sing.start()
     '''
 
+    '''
     while True:
         alive = False
         #alive = alive or sing.isAlive()
-        for t in thread_list:
+        for t in job_list:
             alive = alive or t.isAlive()
         if not alive:
             break
+    '''
+    for t in job_list:
+        t.join()
 
     time_end = timeit.default_timer()
 
@@ -124,3 +130,4 @@ def demo(FLAGS):
     time_used = time_end - time_start
     print("Time Used: %d second!" %time_used)
     print("FPS: %.6f" %(inference_frame_count / time_used))
+    print("FPS: %.6f" %(f.value / time_used))

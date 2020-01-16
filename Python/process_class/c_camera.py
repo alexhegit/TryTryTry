@@ -3,8 +3,9 @@
 
 import cv2
 #import copy
-from threading import Thread
-from queue import Queue
+#from threading import Thread
+from multiprocessing import Process, Queue
+#from queue import Queue
 #from Queue import Queue
 
 VDEV = "/dev/video0"
@@ -58,13 +59,14 @@ def initCamera(cap, fps):
     setVideoInfo(cap, fps, 640, 480)
     showVideoInfo(cap)
 
-class ImgCap(Thread):
-    def __init__(self, cap, queue_list, signal):
-        Thread.__init__(self)
+class ImgCap(Process):
+    def __init__(self, cap, queue_list, signal, f):
+        Process.__init__(self)
         self.cap = cap
         self.qlist = queue_list
         self.signal = signal
         self.frame_count = 0
+        self.f = f
     def run(self):
         while (True):
             for queue in self.qlist:
@@ -85,7 +87,8 @@ class ImgCap(Thread):
                 for queue in self.qlist:
                     queue.put(None)
                 break
-        print("Quit ImgCap")
+        self.f.value = self.frame_count
+        print("Quit {}, frames {}".format(self.name, self.frame_count))
     def terminate(self):
         print("ImgCap OFF")
         self.signal = "OFF"
